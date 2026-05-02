@@ -60,6 +60,90 @@ try {
                 echo "     * 成绩标识: {$grade->gradeTag}\n";
             }
         }
+        
+        // 新增：查询具体科目成绩功能
+        echo "\n3.1 查询具体科目成绩...\n";
+        
+        // 示例：查询数据结构成绩
+        $targetCourse = "数据结构";
+        $foundCourse = null;
+        
+        foreach ($grades as $grade) {
+            if (str_contains($grade->courseName, $targetCourse)) {
+                $foundCourse = $grade;
+                break;
+            }
+        }
+        
+        if ($foundCourse) {
+            echo "   ✅ 找到课程: {$foundCourse->courseName}\n";
+            echo "     成绩: {$foundCourse->score}分\n";
+            echo "     学分: {$foundCourse->credit}\n";
+            echo "     绩点: {$foundCourse->gpa}\n";
+            echo "     课程性质: {$foundCourse->gradeType}\n";
+            if ($foundCourse->gradeTag) {
+                echo "     成绩标识: {$foundCourse->gradeTag}\n";
+            }
+        } else {
+            echo "   ℹ️  未找到包含 \"{$targetCourse}\" 的课程\n";
+        }
+        
+        // 示例：查询所有数学相关课程
+        echo "\n3.2 查询数学相关课程成绩...\n";
+        $mathCourses = [];
+        foreach ($grades as $grade) {
+            if (str_contains($grade->courseName, '数学') || 
+                str_contains($grade->courseName, '高数') || 
+                str_contains($grade->courseName, '微积分')) {
+                $mathCourses[] = $grade;
+            }
+        }
+        
+        if (!empty($mathCourses)) {
+            echo "   共找到 " . count($mathCourses) . " 门数学相关课程：\n";
+            foreach ($mathCourses as $course) {
+                echo "   - {$course->courseName}: {$course->score}分\n";
+            }
+        } else {
+            echo "   ℹ️  未找到数学相关课程\n";
+        }
+        
+        // 示例：查询90分以上的课程
+        echo "\n3.3 查询90分以上的课程...\n";
+        $highScoreCourses = [];
+        foreach ($grades as $grade) {
+            if (is_numeric($grade->score) && $grade->score >= 90) {
+                $highScoreCourses[] = $grade;
+            }
+        }
+        
+        if (!empty($highScoreCourses)) {
+            echo "   共找到 " . count($highScoreCourses) . " 门90分以上课程：\n";
+            foreach ($highScoreCourses as $course) {
+                echo "   - {$course->courseName}: {$course->score}分\n";
+            }
+        } else {
+            echo "   ℹ️  未找到90分以上的课程\n";
+        }
+        
+        // 示例：查询不及格课程
+        echo "\n3.4 查询不及格课程...\n";
+        $failedCourses = [];
+        foreach ($grades as $grade) {
+            if (is_numeric($grade->score) && $grade->score < 60) {
+                $failedCourses[] = $grade;
+            }
+        }
+        
+        if (!empty($failedCourses)) {
+            echo "   ⚠️  共找到 " . count($failedCourses) . " 门不及格课程：\n";
+            foreach ($failedCourses as $course) {
+                echo "   - {$course->courseName}: {$course->score}分\n";
+            }
+        } else {
+            echo "   ✅ 没有不及格课程\n";
+        }
+        
     } catch (HnuQueryException $e) {
         echo "   获取失败: {$e->getMessage()}\n";
         echo "   错误代码: {$e->getCode()}\n";
